@@ -2,11 +2,13 @@ require("dotenv").config()
 const express = require("express")
 const PORT = process.env.PORT || 3000
 const morgan = require("morgan")
+const cors = require("cors");
 
 const app = express();
 
 app.use(express.json())
 app.use(express.static("dist"))
+app.use(cors())
 
 morgan.token("body", (req, res) => 
     JSON.stringify(req.body)
