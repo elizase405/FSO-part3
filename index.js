@@ -67,10 +67,10 @@ app.delete("/api/persons/:id", (req, res, next) => {
         .catch(error => next(error))
 })
 
-app.get("/info", async (req, res, next) => {
-	const len = await Person.countDocuments()
-	const text = `<p>Phonebook has info for ${len} people</p><p>${Date()}</p>`
-	res.send(text)
+app.get("/info", async (req, res) => {
+    const len = await Person.countDocuments()
+    const text = `<p>Phonebook has info for ${len} people</p><p>${Date()}</p>`
+    res.send(text)
 })
 
 const errorHandler = (error, req, res, next) => {

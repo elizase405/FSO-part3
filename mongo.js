@@ -5,10 +5,10 @@ const morgan = require("morgan")
 const PORT = 3002
 const pwd = process.argv[2]
 
-const app = express();
+const app = express()
 const MONGO_URI = `mongodb+srv://elizase405:${pwd}@people.bi5zeu1.mongodb.net/Contact?retryWrites=true&w=majority`
 
-mongoose.connect(MONGO_URI).then(result => console.log("Connected to MongoDB")).catch(error => console.log("Failed to connect to MongoDB", error.message))
+mongoose.connect(MONGO_URI).then(() => console.log("Connected to MongoDB")).catch(error => console.log("Failed to connect to MongoDB", error.message))
 
 app.use(express.json())
 
@@ -21,27 +21,27 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         required: true
     }
-}, {timestamp: true})
+}, { timestamp: true })
 
 const User = mongoose.model("User", UserSchema)
 
-morgan.token("post", (req, res) => {
-    if (req.method == "POST") {
+morgan.token("post", (req) => {
+    if (req.method === "POST") {
         return JSON.stringify({
             "name": process.argv[3],
             "number": process.argv[4]
         })
     }
 })
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post'))
+app.use(morgan(":method :url :status :res[content-length] - :response-time ms :post"))
 
 app.get("/api/persons", (req, res, next) => {
     const len = process.argv.length
     if (len === 3)
-    { 
+    {
         return User
             .find({})
-            .then(persons => { 
+            .then(persons => {
                 res.json(persons)
                 mongoose.connection.close()
             })
@@ -64,28 +64,25 @@ app.get("/api/persons/:id", (req, res) => {
 */
 
 app.post("/api/persons", (req, res, next) => {
-    const name = process.argv[3];
-    const number = process.argv[4];
+    const name = process.argv[3]
+    const number = process.argv[4]
 
     if (!name || !number) {
-        return res.status(400).json({error: "No content"}).end()
+        return res.status(400).json({ error: "No content" }).end()
     }
 
-	/*
+    /*
     if (persons.find(person => person.name === name))
     {
         return res.status(400).json({error: "Name must be unique"})
     }
 	*/
-    const person = new User({ 
-	    name,
-	    number
-    })
-    person.save().then(savedPerson => res.send(`added ${name} number ${number} to phonebook`)).catch(error => next(error))
+    const person = new User({ name, number })
+    person.save().then(() => res.send(`added ${name} number ${number} to phonebook`)).catch(error => next(error))
 })
 
 app.listen(PORT, () => {
-	console.log(`Server started at PORT ${PORT}`)
+    console.log(`Server started at PORT ${PORT}`)
 })
 
 
